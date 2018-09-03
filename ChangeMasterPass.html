@@ -1,0 +1,44 @@
+<html>
+<h1>Insert New Password!</h1>
+<form action="/change_pass" method="POST">
+    Old password:<input id="old_pass" type="password" name="old_pass"><input type="checkbox" onclick="ShowPass('old_pass')">Show Password <br>
+    New password: <input id="pass" type="password" name="pass"><input type="checkbox" onclick="ShowPass('pass')">Show Password <br>
+    <input type="submit" value="Submit">
+</form>
+<script>
+function ShowPass(id){
+    var input=document.getElementById(id);
+    if(input.type.localeCompare('password')==0){
+        input.type='text';
+    }
+    else{
+        input.type='password';
+    }
+}
+function DeleteAllCookies()
+{
+			Cookie=document.cookie;
+            console.log(Cookie.localeCompare('')!=-1);
+			//if  not empty
+			if(Cookie.localeCompare('')!=-1){
+				cookies=Cookie.split(';');
+                console.log(cookies);
+				var cookies_names=[];
+				cookies.forEach(function(cookie){cookies_names.push(cookie.split('=')[0]);}); 
+				//deleting cookies
+                console.log(cookies_names);
+				cookies_names.forEach(function(name){document.cookie=name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/;';});
+				//cookies_names.forEach(function(name){$.cookie(name, null, { path: '/' });});
+			}
+}
+
+
+function Start(){
+	DeleteAllCookies();	
+	
+}
+
+window.onload=Start();
+
+</script>
+</html>

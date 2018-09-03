@@ -1,0 +1,103 @@
+<html>
+    <head>
+        <title>
+            Restricted Home Page
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    </head>
+    <style>
+        .in{
+           
+            position:relative;
+            font-size: 36px;
+        }
+        .btn{
+           
+            font-size: 16px;
+            width: inherit;
+        }
+    </style>
+    <body>
+        <div align="center" style="top:20%;position:relative">
+            <h1 >Insert Record</h1><br>
+
+            
+            <input id="page" class="in" type="text" placeholder="Insert Page Url"><br><br>
+
+
+            <input id="user" class="in" type="text" placeholder="Insert Username"><br><br>
+
+
+            <input id="pass" class="in" type="password" placeholder="Insert Password">
+            <div style="top:10px;position:relative">
+                <button onclick="ShowPass('pass')" class="btn">Show Password</button>
+                <button onclick="RandomPass()" style="position:relative;left:10px" class="btn">Random Pass</button>
+                <input id="pass-size" type="number" min=1 step=1 value=13 style="font-size:16px;left:20px;position:relative;width:100px">
+            </div><br>
+
+
+            <button id="send" type="submit" style="font-size: 36px;width:450px">Insert Record</button><br>
+            
+            <div id="output">
+        
+            </div>
+        </div>
+        
+    </body>
+    <script>
+        document.addEventListener('keypress', (event) => {
+          const keyName = event.key;
+
+          //alert('keypress event\n\n' + 'key: ' + keyName);
+            if(keyName=="Enter"){
+                document.getElementById("send").click();
+            }
+        });
+        
+        function ShowPass(id){
+            var input=document.getElementById(id);
+            if(input.type.localeCompare('password')==0){
+                input.type='text';
+            }
+            else{
+                input.type='password';
+            }
+        }
+        
+        $('#send').click(function(){
+            if($('#page').val()!='' &&$('#user').val()!='' && $('#pass').val()!=''){
+                
+                $.ajax({
+                    type: "POST",
+                    url: "/insert",
+
+                    data: {page:$('#page').val(),user:$('#user').val(),pass:$('#pass').val()},//'{key1:something,key2:something2}'
+
+                    success: function(responseData, textStatus, jqXHR) {
+                        $('#output').html( responseData);
+                        setTimeout(function(){$('#output').html('');},1000);
+                    },
+                    error: function (responseData, textStatus, errorThrown) {
+                        alert('POST failed.');
+                    }
+               });
+            }
+            else{
+                $('#output').html( '<h1><font color="red">Fill Empty Inputs!</font></h1>');
+                setTimeout(function(){$('#output').html('');},1000);
+            }
+        });
+        function RandomPass() {
+          var size=document.getElementById('pass-size').value;
+          var text = "";
+          var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,()/%&$#@=[]{}";
+
+          for (var i = 0; i < size; i++)
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+          document.getElementById('pass').value=text;
+        }
+    </script>
+
+
+</html>

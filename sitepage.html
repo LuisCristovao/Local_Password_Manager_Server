@@ -1,0 +1,62 @@
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>    
+</head>
+<h1>Insert Encryption Key!</h1>
+<form action="/login" method="POST">
+    <input id="token" name="token" style="visibility: collapse;height: 0px;width: 0px; opacity: 0;">
+    Password: <input id="password" type="password" name="pass"><input type="checkbox" onclick="ShowPass('password')">Show Password<br>
+    <input type="submit" value="Submit">
+</form>
+<script>
+function ShowPass(id){
+    var input=document.getElementById(id);
+    if(input.type.localeCompare('password')==0){
+        input.type='text';
+    }
+    else{
+        input.type='password';
+    }
+}
+function DeleteAllCookies()
+{
+			Cookie=document.cookie;
+            console.log(Cookie.localeCompare('')!=-1);
+			//if  not empty
+			if(Cookie.localeCompare('')!=-1){
+				cookies=Cookie.split(';');
+                console.log(cookies);
+				var cookies_names=[];
+				cookies.forEach(function(cookie){cookies_names.push(cookie.split('=')[0]);}); 
+				//deleting cookies
+                console.log(cookies_names);
+				cookies_names.forEach(function(name){document.cookie=name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/;';});
+				//cookies_names.forEach(function(name){$.cookie(name, null, { path: '/' });});
+			}
+}
+
+
+function Start(){
+	DeleteAllCookies();	
+    ReceiveToken();
+	
+}
+function ReceiveToken(){
+    $.ajax({
+            type: "POST",
+            url: "/token",
+
+            data: {token:'give me token'},//'{key1:something,key2:something2}'
+
+            success: function(responseData, textStatus, jqXHR) {
+                $('#token').val(responseData);
+            },
+            error: function (responseData, textStatus, errorThrown) {
+                alert('POST failed.');
+            }
+       });
+}
+window.onload=Start();
+
+</script>
+</html>

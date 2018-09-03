@@ -1,0 +1,366 @@
+<html>
+    <head>
+        <title>
+            Restricted Home Page
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+        </script>
+        <script src="search_engine.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    </head>
+    <style>
+        .in{
+           
+            width:100%;
+            font-size: 36px;
+        }
+        .dropbtn {
+            background-color: #3498DB;
+            color: white;
+            padding: 16px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .dropbtn:hover, .dropbtn:focus {
+            background-color: #2980B9;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+            width:100%;
+        }
+
+        .dropdown-content {
+            
+            position: absolute;
+            background-color: #f1f1f1;
+            min-width: 160px;
+            overflow: auto;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            width: 100%;
+        }
+
+        .dropdown-content p {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+
+        .dropdown p:hover {
+            background-color: #ddd;
+            cursor: pointer;
+                
+        }
+
+        .show {display:block;}
+    </style>
+    <body>
+        <h1 style="text-align:center">Get Record</h1><br>
+        <div align="center">
+            <div class="w3-xxlarge"><i class="fa fa-search"></i></div><input id="search" placeholder="Type word to search"  style="font-size:150%;width:240px;">
+        </div>
+        
+        <div class="dropdown">
+        
+          <div id="myDropdown" class="dropdown-content">
+            <!--<p href="#home" onclick="Select(this.innerHTML)">gmail</p>
+            <p href="#about" onclick="Select(this.innerHTML)">About</p>
+            <p href="#contact" onclick="Select(this.innerHTML)">Contact</p>-->
+          </div>
+        </div>
+        <!--<input id="page" class="in" placeholder="Get Page"><br>-->
+        <!--<button id="send" style="width:100%;height: 10%;" type="submit">Get User Pass</button>-->
+        
+        <div id="output">
+        
+        </div>
+    </body>
+    <script>
+        //Global variables
+        var prev_selected=null;
+        var research_words={};
+        
+        
+        /*$('#send').click(function(){
+            $.ajax({
+                type: "POST",
+                url: "/get",
+                
+                data: {page:$('#page').val()},//'{key1:something,key2:something2}'
+                
+                success: function(responseData, textStatus, jqXHR) {
+                    $('#output').html( responseData);
+                },
+                error: function (responseData, textStatus, errorThrown) {
+                    alert('POST failed.');
+                }
+           });
+        });*/
+		function htmlEncode(value){
+		  //create a in-memory div, set it's inner text(which jQuery automatically encodes)
+		  //then grab the encoded contents back out.  The div never exists on the page.
+		  return $('<div/>').text(value).html();
+		}
+
+		function htmlDecode(value){
+		  return $('<div/>').html(value).text();
+		}
+        window.onload=GetPages();
+        function GetPages(){
+                
+                $.ajax({
+                    type: "POST",
+                    url: "/getPages",
+
+                    data: {pages:'give me the pages'},//'{key1:something,key2:something2}'
+
+                    success: function(responseData, textStatus, jqXHR) {
+                        if(responseData.length==0){
+                                $('#myDropdown').html('Empty DB!');
+                        }
+                        else{
+                            
+                            if(SecurityCheck(responseData.split('\t')[0]) && SecurityCheck(responseData.split('\t')[1])){
+
+                                responseData.split('\t').forEach(function(page){
+                                    $('#myDropdown').append(page); 
+                                    word=''+page;
+                                    if(word!=''){
+                                        
+                                        word=word.split('Select(this.innerHTML,this.parentNode)">')[1].split('</p></div>')[0];  
+                                        research_words[word]=word;   
+                                    }
+                                });
+                            }
+                            else{
+                                $('#myDropdown').html('Wrong Password!'); 
+                            }
+                        }
+                        //$('#output').html( responseData);
+                    },
+                    error: function (responseData, textStatus, errorThrown) {
+                        alert('Error in DB.txt:\n\n You need to open DB.txt in notepad++ and go to:\n Edit->EOL Conversion-> Unix(FL).\n\nThis will solve the issue!! dont forget to save the changed DB.txt');
+                    }
+                });
+           
+        }
+        
+        function Copy(input,feed){
+            console.log(input+' '+feed);
+            console.log(input);
+            var copy_text=document.getElementById(input);
+            copy_text.select();
+            document.execCommand("Copy");
+            document.getElementById(feed).innerHTML="Copied Value!";
+            setTimeout(function(){document.getElementById(feed).innerHTML='';},1000);
+        }
+        function DropMenu(){
+            edit_state=0;
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+        
+        function Select(value,parent){
+			var trueval=htmlDecode(value);
+            //when clicking on other record than prev_selected
+            if(prev_selected!=null && prev_selected!=parent){
+                //delete prev selected page
+                
+                page=prev_selected.innerText.split('\n')[0];  
+                //remove from div
+                prev_selected.innerHTML='<div ><p onclick="Select(this.innerHTML,this.parentNode)">'+page+'</p></div>';
+                prev_selected=null;
+            }
+            //second time pressing same record
+            if(parent==prev_selected){
+                 //delete prev selected page
+                page=parent.innerText.split('\n')[0]; 
+                //remove from div
+                parent.innerHTML='<div ><p onclick="Select(this.innerHTML,this.parentNode)">'+page+'</p></div>';
+                prev_selected=null;
+            }
+            else{
+                
+                $.ajax({
+                    type: "POST",
+                    url: "/get",
+
+                    data: {page:trueval},//'{key1:something,key2:something2}'
+
+                    success: function(responseData, textStatus, jqXHR) {
+                        //append to record div response Data
+                        backup=parent.innerHTML;
+                        backup+=''+responseData;
+                        parent.innerHTML=backup;
+                        prev_selected=parent;
+                    },
+                    error: function (responseData, textStatus, errorThrown) {
+                        alert('POST failed.');
+                    }
+               });
+                //document.getElementById("myDropdown").classList.toggle("show");
+            }
+        }
+        function SecurityCheck(str){
+            for(i=0;i<str.length;i++){
+                ascii_number=str[i].charCodeAt();
+                if(ascii_number>255){
+                    return false;
+                }
+            }
+            return true;
+        }
+        //global var to control delete
+        var delete_state=0;
+        var prev_del_btn=null;
+        function Delete(username_input_id,button){
+            console.log(username_input_id);
+            var db_id=document.getElementById(username_input_id).name;
+            //console.log(page_element.innerHTML.split(':')[1]);
+            console.log(db_id);
+            //
+            delete_state++;
+            if(prev_button!=null){
+                    prev_button.innerHTML="Edit";
+                    prev_username_input.style.height='0px';
+                    prev_username_input.style.opacity='0';
+                    prev_pass_input.style.height='0px';
+                    prev_pass_input.style.opacity='0';
+                    edit_state=0;
+            }
+            if(prev_del_btn!=null && prev_del_btn!=button){
+                delete_state=1;
+                //hide put prev button to state 0
+                prev_del_btn.style.color="black";
+                prev_del_btn.innerHTML="Delete";
+                
+            }
+            //delete from DB
+            if(delete_state==2){
+                delete_state=0;
+                $.ajax({
+                    type: "POST",
+                    url: "/delete",
+
+                    data: {id:db_id},//'{key1:something,key2:something2}'
+
+                    success: function(responseData, textStatus, jqXHR) {
+                        button.innerHTML=responseData;
+                        button.style="color:red";
+                    },
+                    error: function (responseData, textStatus, errorThrown) {
+                        alert('POST failed.');
+                    }
+                });
+                //$('#myDropdown').html('');
+                //setTimeout(GetPages,300); 
+                setTimeout(function(){
+                    button.innerHTML="Delete";
+                    button.style="color:black";
+                    button.style="width:100px";
+                },1500);
+                //take this page of possible choices
+                button.parentElement.innerHTML='';
+                //search_text[]
+            }
+            
+            if(delete_state==1){
+                button.style.color="red";
+                button.innerHTML="Are you Sure you want to Delete?";
+            }
+            //base state
+            if(delete_state==0){
+                button.style.color="black";
+                button.innerHTML="Delete";
+            }    
+            prev_del_btn=button;   
+            
+        }
+        //global var that controls edit state
+        var edit_state=0;
+        var prev_button=null;
+        var prev_username_input=null;
+        var prev_pass_input=null;
+        function Edit(username_input_id,password_input_id,button){
+            var username_input=document.getElementById(username_input_id);
+            var password_input=document.getElementById(password_input_id);
+            var db_id=username_input.name;
+            var username=username_input.value;
+            var password=password_input.value;
+            
+            edit_state++;
+            if(prev_del_btn!=null){
+                    prev_del_btn.style.color="black";
+                    prev_del_btn.innerHTML="Delete";
+                    delete_state=0;
+            }
+            if(prev_button!=null && prev_button!=button){
+                edit_state=1;
+                //hide previous inputs
+                prev_button.innerHTML="Edit";
+                prev_username_input.style.height='0px';
+                prev_username_input.style.opacity='0';
+                prev_pass_input.style.height='0px';
+                prev_pass_input.style.opacity='0';
+                
+            }
+            console.log(db_id+' '+username+' '+password);
+            if(edit_state==2){
+                
+                    
+                edit_state=0;
+                $.ajax({
+                    type: "POST",
+                    url: "/edit",
+
+                    data: {id:db_id,user:username,pass:password},//'{key1:something,key2:something2}'
+
+                    success: function(responseData, textStatus, jqXHR) {
+                       button.innerHTML=responseData;
+                       button.style="color:green"
+                    },
+                    error: function (responseData, textStatus, errorThrown) {
+                        alert('POST failed.');
+                    }
+                });
+                //$('#myDropdown').html('');
+                //setTimeout(GetPages,300);
+                setTimeout(function(){
+                    button.innerHTML="Edit";
+                    button.style="color:black";
+                    button.style="width:100px";
+                },2300);
+                
+            }
+            if(edit_state==1){
+                //show input
+                username_input.style.height='20px';
+                username_input.style.opacity='100';
+                password_input.style.height='20px';
+                password_input.style.opacity='100';
+                button.innerHTML='Submit';
+                
+            }
+            if(edit_state==0){
+                username_input.style.height='0px';
+                username_input.style.opacity='0';
+                password_input.style.height='0px';
+                password_input.style.opacity='0';
+                button.innerHTML='Submit';
+            }
+            prev_button=button;
+            prev_username_input=username_input;
+            prev_pass_input=password_input;
+            /* */   
+        }
+    </script>
+
+
+</html>
