@@ -147,19 +147,9 @@ function WriteDB(DBlines){
 
 
 //Main sort off------------------
-//loadDB changes global var DB
-var DB=loadDB();
-//console.log(DB);
-//console.log(DB);
-//var hw = encrypt("hello world")
-// outputs hello world
-//console.log(decrypt(hw));
-//important--------------------------------------------
-/*var crypto=require('crypto');
-var hash = crypto.createHash('sha256').update('aaa').digest('base64');
-console.log('hash:'+hash);*/
-//---------------------------------------------------------
-var crypto;
+
+
+
 var server_token=makeToken(30);
 app.get('/', function(req, res) {
     //res.sendFile needs absolut path which means C://.../... __dirname is the working directory
