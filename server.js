@@ -173,6 +173,7 @@ app.get('/InsertRecord.html', function(req, res) {
     res.sendFile(__dirname+'/InsertRecord.html');
 });
 app.get('/GetRecord.html', function(req, res) {
+	console.log("Someone is accessing passwords")
     //res.sendFile needs absolut path which means C://.../... __dirname is the working directory
     res.sendFile(__dirname+'/GetRecord.html');
 });
