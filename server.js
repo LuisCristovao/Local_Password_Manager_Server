@@ -181,6 +181,13 @@ app.get('/ChangeMasterPass.html', function(req, res) {
     //res.sendFile needs absolut path which means C://.../... __dirname is the working directory
     res.sendFile(__dirname+'/ChangeMasterPass.html');
 });
+
+app.get('/ExportPasswords.html', function(req, res) {
+    //res.sendFile needs absolut path which means C://.../... __dirname is the working directory
+    res.sendFile(__dirname+'/ExportPasswords.html');
+});
+
+
 app.post('/token',function(req,res){
     //console.log(req.body);
     res.writeHead(200);
@@ -384,6 +391,28 @@ app.post('/change_pass',function(req,res){
     //res.writeHead(302,{Location:'/restricted.html'});
     res.writeHead(200);
     res.end('<h1>Master Password Changed with Success!</h1><br><a href="/"><h2><font color="red">Click here to Go to the Initial Page. Insert the new password again to use it!</font></h2></a>');
+});
+
+app.post('/extractPasswords',(req,res)=>{
+    var pass=req.body.pass;
+    crypto= require('crypto'),
+    algorithm = 'aes-256-ctr',
+    password= pass;
+  
+    var currentdecryptDB=[];
+    var DB=loadDB();
+    var DBlines=DB.split('\n');
+    DBlines.forEach(function(line){
+        var D=decrypt(line);
+        currentdecryptDB.push(D);
+    
+    });
+    res.writeHead(200);
+    decrypt_text=""
+    currentdecryptDB.forEach(line=>{
+        decrypt_text+=line+'\n'
+    })
+    res.end(decrypt_text);
 });
 
 
