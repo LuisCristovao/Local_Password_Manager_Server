@@ -1,6 +1,6 @@
 # Local_Password_Manager_Server
 
-DEPRECATED USE THIS ONE INSTEAD: https://luiscristovao.github.io/Projects/index.html?Local-Password-Manager-v2
+**DEPRECATED USE THIS ONE INSTEAD: https://luiscristovao.github.io/Projects/index.html?Local-Password-Manager-v2**
 
 # To use this program first install  node js here: https://nodejs.org/en/download/
 
