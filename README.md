@@ -1,5 +1,7 @@
 # Local_Password_Manager_Server
 
+DEPRECATED USE THIS ONE INSTEAD: https://luiscristovao.github.io/Projects/index.html?Local-Password-Manager-v2
+
 # To use this program first install  node js here: https://nodejs.org/en/download/
 
 ## After installing, just run the bat file to start the program. If you don't trust it then open it with notepad ++ to see if the code is harmful.
